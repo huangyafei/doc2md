@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from app.api.routes import router
 
 app = FastAPI(
@@ -17,4 +19,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router, prefix="/api/v1") 
+# 挂载静态文件目录
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+# API 路由
+app.include_router(router, prefix="/api/v1")
+
+# 根路由返回 index.html
+@app.get("/")
+async def read_root():
+    return FileResponse("app/static/index.html") 
