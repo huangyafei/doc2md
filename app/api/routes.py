@@ -1,5 +1,6 @@
-from fastapi import APIRouter, UploadFile, HTTPException
+from fastapi import APIRouter, UploadFile, HTTPException, Depends
 from app.services.converter import MarkdownConverter
+from app.api.auth import verify_api_key
 from typing import Optional
 import io
 
@@ -8,7 +9,8 @@ router = APIRouter()
 @router.post("/convert")
 async def convert_to_markdown(
     file: UploadFile,
-    llm_enabled: Optional[bool] = False
+    llm_enabled: Optional[bool] = False,
+    api_key: str = Depends(verify_api_key)
 ):
     """
     将上传的文件转换为 Markdown 格式
